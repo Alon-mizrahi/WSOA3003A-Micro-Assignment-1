@@ -6,18 +6,24 @@ using UnityEngine.UI;
 public class battleHUD : MonoBehaviour
 {
     public Text nameText;
-    public Slider HpSlider;
+
+    public Slider PhysicalitySlider;
+    public Slider JoySlider;
+    public Slider MeaningSlider;
 
     public void setHUD(unit unit)
     {
         nameText.text = unit.UnitName;
-        HpSlider.maxValue = unit.maxHP;
-        HpSlider.value = unit.currentHP;
+
+        PhysicalitySlider.maxValue = unit.maxPysicality;
+        PhysicalitySlider.value = unit.currentPysicality;
+
+        JoySlider.maxValue = unit.maxJoy;
+        JoySlider.value = unit.currentJoy;
+
+        MeaningSlider.maxValue = unit.maxMeaning;
+        MeaningSlider.value = unit.currentMeaning;
     }
 
-    public void SetHP(int hp)
-    {
-        HpSlider.value = hp;
-    }
 
 }

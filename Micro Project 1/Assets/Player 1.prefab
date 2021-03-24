@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 41215370361365422}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -59,7 +59,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 0631263287e184746ae5a007d0ebc43d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -104,6 +104,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd3f50400b9918f4a9670a8ecff7b55d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UnitName: PLayer1
-  maxHP: 50
-  currentHP: 40
+  UnitName: Player 1
+  maxPysicality: 100
+  currentPysicality: 100
+  maxJoy: 100
+  currentJoy: 100
+  maxMeaning: 100
+  currentMeaning: 100

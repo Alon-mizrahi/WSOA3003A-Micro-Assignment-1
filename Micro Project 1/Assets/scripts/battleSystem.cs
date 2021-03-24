@@ -10,7 +10,6 @@ public class battleSystem : MonoBehaviour
     public battleHUD playerHUD;
     public battleHUD enemyHUD;
 
-
     public BattleState state;
 
     public Text enemyNameText;
@@ -24,7 +23,19 @@ public class battleSystem : MonoBehaviour
     public GameObject enemyprefab;
     public GameObject playerprefab;
 
-//SETTING UP AND START STATE------------------------------------------------------------
+
+    //the balancing data desing numbers
+    public float BalanceAtkPHVal = 1f;
+    public float BalanceAtkJoyVal = 1f;
+    public float BalanceAtkMeaningVal = 1f;
+
+    //the balancing data desing numbers
+    public float BalanceDefPHVal = 1f;
+    public float BalanceDefJoyVal = 1f;
+    public float BalanceDefMeaningVal = 1f;
+
+
+    //SETTING UP AND START STATE------------------------------------------------------------
     void Start()
     {
         state = BattleState.START;
@@ -43,7 +54,6 @@ public class battleSystem : MonoBehaviour
 
         playerHUD.setHUD(playerUnit);
         enemyHUD.setHUD(enemyUnit);
-
         DialogText.text = "lifes hand";
 
         yield return new WaitForSeconds(2f);
@@ -67,40 +77,44 @@ public class battleSystem : MonoBehaviour
     void PlayerTurn() // can play card to attack or heal
     {
         DialogText.text = "Player 1's Turn";
-        //they can now draw or play a card.
-
-        //create function called on button click outside of player turn
-    }
-
-    //somefunction called when playing card
-    //in this function apply card stats.
-    //check if enemy dies
-    //if true move to won state and call won function
-    //StartCoroutine(WonFunction());
-    //
-    //check if player dies
-    //if true move to lost state and call lost function
-    //StartCoroutine(LostFunction());
-    //
-    //else move to enemy turn state and call enemy turn function
-
-
-    IEnumerator DrawCard()
-    {
-        //draw card and add to deck on cardsystem script
-
-        yield return new WaitForSeconds(2f);
-        // interact with stats if needed
-        state = BattleState.ENEMYTURN;
-        StartCoroutine(EnemyTurn());
     }
 
     public void OnDrawButton() //draw card and end turn
     {
-        if (state != BattleState.PLAYERTURN) { return; }
-
         StartCoroutine(DrawCard());
     }
+
+    IEnumerator DrawCard()
+    {
+        //draw card and add to deck on cardsystem script
+        Debug.Log("cross call worked");
+        state = BattleState.ENEMYTURN;
+        yield return new WaitForSeconds(2f);
+        StartCoroutine(EnemyTurn());
+    }
+
+
+    public void CardUsed(float PHVal)
+    {
+        Debug.Log("This is the cards PH Value: " +PHVal);
+    }
+
+//Attack and defens play funcitons---------------------------------------------------------------
+
+    public void OnAttackCard(float PHVal, float MeaningVal, float JoyVal)
+    {
+
+    }
+
+
+    public void OnDefenseCard(float PHVal, float MeaningVal, float JoyVal)
+    {
+
+    }
+
+
+    //----------------------------------------------------------------------
+
 
     //WON STATE---------------------------------------------------------------------------
     IEnumerator WonFunction()
@@ -110,7 +124,8 @@ public class battleSystem : MonoBehaviour
         //reset scene
     }
 
-    //LOST STATE------------------------------------------------------------------------
+
+//LOST STATE------------------------------------------------------------------------
     IEnumerator LostFunction()
     {
         DialogText.text = "You Lost!";
