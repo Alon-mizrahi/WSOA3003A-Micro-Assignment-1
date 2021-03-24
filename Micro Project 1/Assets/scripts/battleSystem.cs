@@ -87,7 +87,8 @@ public class battleSystem : MonoBehaviour
 
     IEnumerator DrawCard()
     {
-        //draw card and add to deck
+        //draw card and add to deck on cardsystem script
+
         yield return new WaitForSeconds(2f);
         // interact with stats if needed
         state = BattleState.ENEMYTURN;
