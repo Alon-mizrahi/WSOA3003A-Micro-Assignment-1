@@ -288,7 +288,7 @@ public class battleSystem : MonoBehaviour
 //LOST STATE------------------------------------------------------------------------
     IEnumerator LostFunction()
     {
-        DialogText.text = "You Lost! resetting 5 seconds";
+        DialogText.text = "You Lost! resetting in 5 seconds";
         yield return new WaitForSeconds(5f);
         //reset scene
         Application.LoadLevel(Application.loadedLevel);
