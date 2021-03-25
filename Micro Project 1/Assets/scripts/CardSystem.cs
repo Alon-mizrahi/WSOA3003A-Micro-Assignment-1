@@ -16,6 +16,15 @@ public class CardSystem : MonoBehaviour
     private bool isTruePlayerCardHolder2 = false;
     private bool isTruePlayerCardHolder3 = false;
 
+    public GameObject EnemyCardHolder1;
+    public GameObject EnemyCardHolder2;
+    public GameObject EnemyCardHolder3;
+
+    public bool isTrueEnemyCardHolder1 = false;
+    public bool isTrueEnemyCardHolder2 = false;
+    public bool isTrueEnemyCardHolder3 = false;
+
+
     //access to states
     public GameObject battleSystem;
     battleSystem battlescript;
@@ -23,36 +32,101 @@ public class CardSystem : MonoBehaviour
 
     void Start()
     {
-        
         battlescript = battleSystem.GetComponent<battleSystem>();
         Shuffle(); 
         //Debug.Log(battlescript.state);
     }
 
-    public void OnDrawCard()
+    private void Update()
+    {
+        if (PlayerCardHolder1.transform.childCount > 0) { isTruePlayerCardHolder1 = true; } else { isTruePlayerCardHolder1 = false; }
+        if (PlayerCardHolder2.transform.childCount > 0) { isTruePlayerCardHolder2 = true; } else { isTruePlayerCardHolder2 = false; }
+        if (PlayerCardHolder3.transform.childCount > 0) { isTruePlayerCardHolder3 = true; } else { isTruePlayerCardHolder3 = false; }
+
+        if (EnemyCardHolder1.transform.childCount > 0) { isTrueEnemyCardHolder1 = true; } else { isTrueEnemyCardHolder1 = false; }
+        if (EnemyCardHolder2.transform.childCount > 0) { isTrueEnemyCardHolder2 = true; } else { isTrueEnemyCardHolder2 = false; }
+        if (EnemyCardHolder3.transform.childCount > 0) { isTrueEnemyCardHolder3 = true; } else { isTrueEnemyCardHolder3 = false; }
+    }
+
+
+    public void OnDrawCard() //called by button
     {
         if (battlescript.state == BattleState.PLAYERTURN) {
             //check player doesnt have 3 cards already
             if (isTruePlayerCardHolder1 == false)
             {
-                deck[deckIterator].transform.position = PlayerCardHolder1.transform.position;
+                //deck[deckIterator].transform.position = PlayerCardHolder1.transform.position;
+                deck[deckIterator].transform.parent = PlayerCardHolder1.transform;
+                deck[deckIterator].transform.position = PlayerCardHolder1.transform.position;  //new Vector3(0f, 0f, 100f);
                 deckIterator++;
                 isTruePlayerCardHolder1 = true;
                 battlescript.OnDrawButton();
+                return;
             }
             else if (isTruePlayerCardHolder2 == false)
             {
+                //deck[deckIterator].transform.position = PlayerCardHolder2.transform.position;
+                deck[deckIterator].transform.parent = PlayerCardHolder2.transform;
                 deck[deckIterator].transform.position = PlayerCardHolder2.transform.position;
                 deckIterator++;
                 isTruePlayerCardHolder2 = true;
                 battlescript.OnDrawButton();
+                return;
             }
             else if (isTruePlayerCardHolder3 == false)
             {
+                //deck[deckIterator].transform.position = PlayerCardHolder3.transform.position;
+                deck[deckIterator].transform.parent = PlayerCardHolder3.transform;
                 deck[deckIterator].transform.position = PlayerCardHolder3.transform.position;
                 deckIterator++;
                 isTruePlayerCardHolder3 = true;
                 battlescript.OnDrawButton();
+                return;
+            }
+        }
+
+        //enemy draw
+        if (battlescript.state == BattleState.ENEMYTURN)
+        {
+            //check player doesnt have 3 cards already
+            if (isTrueEnemyCardHolder1 == false)
+            {
+                //deck[deckIterator].transform.position = EnemyCardHolder1.transform.position;
+                deck[deckIterator].transform.parent = EnemyCardHolder1.transform;
+                deck[deckIterator].transform.position = EnemyCardHolder1.transform.position;
+
+                deck[deckIterator].transform.GetChild(0).GetComponentInChildren<Button>().interactable = false;
+                deckIterator++;
+                isTrueEnemyCardHolder1 = true;
+                battlescript.state = BattleState.PLAYERTURN;
+                battlescript.PlayerTurn();
+                return;
+            }
+            else if (isTrueEnemyCardHolder2 == false)
+            {
+                //deck[deckIterator].transform.position = EnemyCardHolder2.transform.position;
+                deck[deckIterator].transform.parent = EnemyCardHolder2.transform;
+                deck[deckIterator].transform.position = EnemyCardHolder2.transform.position;
+
+                deck[deckIterator].transform.GetChild(0).GetComponentInChildren<Button>().interactable = false;
+                deckIterator++;
+                isTrueEnemyCardHolder2 = true;
+                battlescript.state = BattleState.PLAYERTURN;
+                battlescript.PlayerTurn();
+                return;
+            }
+            else if (isTrueEnemyCardHolder3 == false)
+            {
+                //deck[deckIterator].transform.position = EnemyCardHolder3.transform.position;
+                deck[deckIterator].transform.parent = EnemyCardHolder3.transform;
+                deck[deckIterator].transform.position = EnemyCardHolder3.transform.position;
+
+                deck[deckIterator].transform.GetChild(0).GetComponentInChildren<Button>().interactable = false;
+                deckIterator++;
+                isTrueEnemyCardHolder3 = true;
+                battlescript.state = BattleState.PLAYERTURN;
+                battlescript.PlayerTurn();
+                return;
             }
         }
         //Debug.Log("button push cardsystem says high");

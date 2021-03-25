@@ -34,6 +34,8 @@ public class battleSystem : MonoBehaviour
     public float BalanceDefJoyVal = 1f;
     public float BalanceDefMeaningVal = 1f;
 
+    public CardSystem cardsystem;
+    public Button drawbutton;
 
     //SETTING UP AND START STATE------------------------------------------------------------
     void Start()
@@ -56,17 +58,24 @@ public class battleSystem : MonoBehaviour
         enemyHUD.setHUD(enemyUnit);
         DialogText.text = "lifes hand";
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
 
         state = BattleState.PLAYERTURN;
         PlayerTurn();
     }
 
-//ENEMYTURN STATE---------------------------------------------------------------------
-   IEnumerator EnemyTurn()
+    private void Update()
+    {
+        if (state != BattleState.PLAYERTURN) { drawbutton.interactable = false; } else { drawbutton.interactable = true; }
+    }
+
+    //ENEMYTURN STATE---------------------------------------------------------------------
+    IEnumerator EnemyTurn()
     {
         DialogText.text = "Enemy's turn";
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
+        //do things?
+        if (cardsystem.isTrueEnemyCardHolder1 == false || cardsystem.isTrueEnemyCardHolder2==false||cardsystem.isTrueEnemyCardHolder3==false) { cardsystem.OnDrawCard(); }
     }
     //how am i making the enemy do things?? AI of some kind. potential random between draw and card play. basic function. hardcode?
 
@@ -74,14 +83,9 @@ public class battleSystem : MonoBehaviour
 
 //PLAYERTURN STATE--------------------------------------------------------------
 
-    void PlayerTurn() // can play card to attack or heal
+    public void PlayerTurn() // can play card to attack or heal
     {
         DialogText.text = "Player 1's Turn";
-    }
-
-    public void OnDrawButton() //draw card and end turn
-    {
-        StartCoroutine(DrawCard());
     }
 
     IEnumerator DrawCard()
@@ -93,6 +97,13 @@ public class battleSystem : MonoBehaviour
         StartCoroutine(EnemyTurn());
     }
 
+    public void OnDrawButton() //draw card and end turn
+    {
+        StartCoroutine(DrawCard());
+    }
+
+
+
 
     public void CardUsed(float PHVal)
     {
@@ -101,26 +112,146 @@ public class battleSystem : MonoBehaviour
 
 //Attack and defens play funcitons---------------------------------------------------------------
 
-    public void OnAttackCard(float PHVal, float MeaningVal, float JoyVal)
+    public void OnAttackCard(float PHVal, float MeaningVal, float JoyVal, GameObject card)
     {
+        //what state we in?
+        if (state == BattleState.PLAYERTURN)//player attacking
+        {
+            StartCoroutine(PlayerAttack(PHVal,MeaningVal,JoyVal));
+            Destroy(card);
+            return;
+        }
+        if (state == BattleState.ENEMYTURN)//enemy attacking
+        {
+            EnemyAttack(PHVal, MeaningVal, JoyVal);
+            Destroy(card);
+            return;
+        }
+    }
 
+    IEnumerator PlayerAttack(float PHVal, float MeaningVal, float JoyVal)
+    {
+        //do attack
+        enemyUnit.currentJoy -=JoyVal*BalanceAtkJoyVal;
+        enemyUnit.currentMeaning -=MeaningVal*BalanceAtkMeaningVal;
+        enemyUnit.currentPysicality -= BalanceAtkPHVal*PHVal;
+
+        enemyHUD.JoySlider.value = enemyUnit.currentJoy;
+        enemyHUD.MeaningSlider.value = enemyUnit.currentMeaning;
+        enemyHUD.PhysicalitySlider.value = enemyUnit.currentPysicality;
+
+        //check if dead
+        if (enemyUnit.isDead() == true)
+        {
+            state = BattleState.WON;
+            StartCoroutine(WonFunction());
+        }else
+        {
+            state = BattleState.ENEMYTURN;
+            yield return new WaitForSeconds(2f);
+            StartCoroutine(EnemyTurn());
+
+        }
+    }
+
+    IEnumerator EnemyAttack(float PHVal, float MeaningVal, float JoyVal)
+    {
+        //do attack
+        playerUnit.currentJoy -= JoyVal*BalanceAtkJoyVal;
+        playerUnit.currentMeaning -= MeaningVal*BalanceAtkMeaningVal;
+        playerUnit.currentPysicality -= PHVal*BalanceAtkPHVal;
+
+        playerHUD.JoySlider.value = playerUnit.currentJoy;
+        playerHUD.MeaningSlider.value = playerUnit.currentMeaning;
+        playerHUD.PhysicalitySlider.value = playerUnit.currentPysicality;
+
+        //check if dead
+        if (playerUnit.isDead() == true)
+        {
+            state = BattleState.LOST;
+            StartCoroutine(LostFunction());
+        }
+        else
+        {
+            state = BattleState.PLAYERTURN;
+            yield return new WaitForSeconds(2f);
+            PlayerTurn();
+
+        }
     }
 
 
-    public void OnDefenseCard(float PHVal, float MeaningVal, float JoyVal)
-    {
 
+
+    public void OnDefenseCard(float PHVal, float MeaningVal, float JoyVal, GameObject card)
+    {
+        //what state we in?
+        if (state == BattleState.PLAYERTURN)//player defending
+        {
+            StartCoroutine(PlayerDefend(PHVal, MeaningVal, JoyVal));
+            Destroy(card);
+            return;
+        }
+        if (state == BattleState.ENEMYTURN)//enemy defending
+        {
+            StartCoroutine(EnemyDefend(PHVal, MeaningVal, JoyVal));
+            Destroy(card);
+            return;
+        }
+    }
+
+    IEnumerator PlayerDefend(float PHVal, float MeaningVal, float JoyVal)
+    {
+        playerUnit.currentJoy+=JoyVal*BalanceDefJoyVal;
+        playerUnit.currentMeaning+=MeaningVal*BalanceDefMeaningVal;
+        playerUnit.currentPysicality+=PHVal*BalanceDefPHVal;
+
+        if (playerUnit.currentJoy > playerUnit.maxJoy) { playerUnit.currentJoy = playerUnit.maxJoy; }
+        if (playerUnit.currentMeaning > playerUnit.maxMeaning) { playerUnit.currentMeaning = playerUnit.maxMeaning; }
+        if (playerUnit.currentPysicality > playerUnit.maxPysicality) { playerUnit.currentPysicality = playerUnit.maxPysicality; }
+
+        state = BattleState.ENEMYTURN;
+        DialogText.text = "Enemy's Turn";
+
+        playerHUD.JoySlider.value = playerUnit.currentJoy;
+        playerHUD.PhysicalitySlider.value = playerUnit.currentPysicality;
+        playerHUD.MeaningSlider.value = playerUnit.currentMeaning;
+
+        yield return new WaitForSeconds(1f);
+        StartCoroutine(EnemyTurn());
+    }
+
+    IEnumerator EnemyDefend(float PHVal, float MeaningVal, float JoyVal)
+    {
+        enemyUnit.currentJoy += JoyVal * BalanceDefJoyVal;
+        enemyUnit.currentMeaning += MeaningVal * BalanceDefMeaningVal;
+        enemyUnit.currentPysicality += PHVal * BalanceDefPHVal;
+
+        if (enemyUnit.currentJoy > enemyUnit.maxJoy) { enemyUnit.currentJoy = enemyUnit.maxJoy; }
+        if (enemyUnit.currentMeaning > enemyUnit.maxMeaning) { enemyUnit.currentMeaning = enemyUnit.maxMeaning; }
+        if (enemyUnit.currentPysicality > enemyUnit.maxPysicality) { enemyUnit.currentPysicality = enemyUnit.maxPysicality; }
+
+        state = BattleState.PLAYERTURN;
+
+        enemyHUD.JoySlider.value = enemyUnit.currentJoy;
+        enemyHUD.PhysicalitySlider.value = enemyUnit.currentPysicality;
+        enemyHUD.MeaningSlider.value = enemyUnit.currentMeaning;
+        
+        yield return new WaitForSeconds(1f);
+        PlayerTurn();
     }
 
 
-    //----------------------------------------------------------------------
+
+    //-------------------------------------------------------------------------------------------------------------------------
 
 
     //WON STATE---------------------------------------------------------------------------
     IEnumerator WonFunction()
     {
-        DialogText.text = "You Won!";
-        yield return new WaitForSeconds(2f);
+        DialogText.text = "You Won! resetting in 5 seconds";
+        yield return new WaitForSeconds(5f);
+
         //reset scene
     }
 
@@ -128,8 +259,8 @@ public class battleSystem : MonoBehaviour
 //LOST STATE------------------------------------------------------------------------
     IEnumerator LostFunction()
     {
-        DialogText.text = "You Lost!";
-        yield return new WaitForSeconds(2f);
+        DialogText.text = "You Lost! resetting 5 seconds";
+        yield return new WaitForSeconds(5f);
         //reset scene
     }
 

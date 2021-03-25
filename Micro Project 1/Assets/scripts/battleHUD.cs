@@ -25,5 +25,4 @@ public class battleHUD : MonoBehaviour
         MeaningSlider.value = unit.currentMeaning;
     }
 
-
 }

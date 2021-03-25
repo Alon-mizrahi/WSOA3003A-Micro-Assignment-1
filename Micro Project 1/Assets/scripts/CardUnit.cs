@@ -36,15 +36,15 @@ public class CardUnit : MonoBehaviour
     //defense card used
     public void ATKCardUsed()
     {
-        // send card unit data to attack card script
-        //battleSystem.OnAttackCard(PHVal, MeaningVal, JoyVal);
+        // send card unit data to Attack card function (battlesystem)
+        battleSystem.OnAttackCard(PHVal, MeaningVal, JoyVal, this.gameObject);    
     }
 
     //attack card used
     public void DEFCardUsed()
     {
-        // send card unit data to defense card script
-        // battleSystem.OnDefenseCard(PHVal, MeaningVal, JoyVal);
+        // send card unit data to defense card function (battlesystem)
+        battleSystem.OnDefenseCard(PHVal, MeaningVal, JoyVal, this.gameObject);
     }
 
 
