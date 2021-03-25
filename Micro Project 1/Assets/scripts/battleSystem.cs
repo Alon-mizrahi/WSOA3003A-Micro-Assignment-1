@@ -76,10 +76,25 @@ public class battleSystem : MonoBehaviour
         yield return new WaitForSeconds(1f);
         //do things?
         if (cardsystem.isTrueEnemyCardHolder1 == false || cardsystem.isTrueEnemyCardHolder2==false||cardsystem.isTrueEnemyCardHolder3==false) { cardsystem.OnDrawCard(); }
+        else
+        {
+            int x = Random.Range(1, 4);
+
+            //going to do random number gen and choose of the three cards
+            if (x==1)
+            {
+                cardsystem.EnemyCardHolder1.transform.GetChild(0).GetComponent<CardUnit>().EnemyCardUsed();
+            }
+            else if (x==2)
+            {
+                cardsystem.EnemyCardHolder2.transform.GetChild(0).GetComponent<CardUnit>().EnemyCardUsed();
+            }
+            else if(x==3)
+            {
+                cardsystem.EnemyCardHolder3.transform.GetChild(0).GetComponent<CardUnit>().EnemyCardUsed();
+            }
+        }
     }
-    //how am i making the enemy do things?? AI of some kind. potential random between draw and card play. basic function. hardcode?
-
-
 
 //PLAYERTURN STATE--------------------------------------------------------------
 
@@ -126,6 +141,20 @@ public class battleSystem : MonoBehaviour
             EnemyAttack(PHVal, MeaningVal, JoyVal);
             Destroy(card);
             return;
+        }
+    }
+
+    public void EnemyCardUsed(float PHVal, float MeaningVal, float JoyVal, GameObject card)
+    {
+        if(card.GetComponent<CardUnit>().isATKCard == true)
+        {
+            Destroy(card);
+            StartCoroutine(EnemyAttack(PHVal, MeaningVal, JoyVal));
+        }
+        else
+        {
+            Destroy(card);
+            StartCoroutine(EnemyDefend(PHVal, MeaningVal, JoyVal));
         }
     }
 
@@ -251,8 +280,8 @@ public class battleSystem : MonoBehaviour
     {
         DialogText.text = "You Won! resetting in 5 seconds";
         yield return new WaitForSeconds(5f);
-
         //reset scene
+        Application.LoadLevel(Application.loadedLevel);
     }
 
 
@@ -262,6 +291,7 @@ public class battleSystem : MonoBehaviour
         DialogText.text = "You Lost! resetting 5 seconds";
         yield return new WaitForSeconds(5f);
         //reset scene
+        Application.LoadLevel(Application.loadedLevel);
     }
 
 }

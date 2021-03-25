@@ -19,6 +19,8 @@ public class CardUnit : MonoBehaviour
     public Text JoyValtxt;
     public Text meaningValtxt;
 
+    public bool isATKCard;
+
     battleSystem battleSystem;
     public GameObject battlesystm;
     private void Start()
@@ -47,6 +49,9 @@ public class CardUnit : MonoBehaviour
         battleSystem.OnDefenseCard(PHVal, MeaningVal, JoyVal, this.gameObject);
     }
 
-
+    public void EnemyCardUsed()
+    {
+        battleSystem.EnemyCardUsed(PHVal, MeaningVal, JoyVal, this.gameObject);
+    }
 
 }

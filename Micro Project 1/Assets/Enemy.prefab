@@ -106,8 +106,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UnitName: Baddie
   maxPysicality: 100
-  currentPysicality: 100
+  currentPysicality: 50
   maxJoy: 100
-  currentJoy: 100
+  currentJoy: 50
   maxMeaning: 100
-  currentMeaning: 100
+  currentMeaning: 50
